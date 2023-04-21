@@ -1,0 +1,32 @@
+name: release-mine
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "version"
+        required: true
+
+jobs:
+  release:
+    name: Release plugin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout plugin source code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # 3.1.0
+      - name: Get release tag
+        id: tag
+        run: |
+          echo "tag=${{ inputs.release }}" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Checkout plugin source code
+        run: |
+          echo "1" >> a.txt
+        shell: bash
+      - name: Create release
+        run: |
+          gh release create ${{ steps.tag.outputs.tag }} a.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
