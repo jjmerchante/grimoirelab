@@ -44,8 +44,6 @@ perceval-opnfv = {version = ">=1.1.0", allow-prereleases = true}
 perceval-puppet = {version = ">=1.1.0", allow-prereleases = true}
 perceval-weblate = {version = ">=1.1.0", allow-prereleases = true}
 sortinghat = {version = ">=1.11.0", allow-prereleases = true}
-kidash = {version = ">=1.1.0", allow-prereleases = true}
-grimoirelab-panels = {version = ">=1.2.0", allow-prereleases = true}
 grimoire-elk = {version = ">=1.4.0", allow-prereleases = true}
 sirmordred = {version = ">=1.2.0", allow-prereleases = true}
 cereslib = {version = ">=1.1.0", allow-prereleases = true}

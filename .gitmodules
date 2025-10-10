@@ -4,9 +4,6 @@
 [submodule "src/grimoirelab-sortinghat"]
 	path = src/grimoirelab-sortinghat
 	url = https://github.com/chaoss/grimoirelab-sortinghat.git
-[submodule "src/grimoirelab-sigils"]
-	path = src/grimoirelab-sigils
-	url = https://github.com/chaoss/grimoirelab-sigils.git
 [submodule "src/grimoirelab-perceval"]
 	path = src/grimoirelab-perceval
 	url = https://github.com/chaoss/grimoirelab-perceval.git
@@ -31,12 +28,6 @@
 [submodule "src/grimoirelab-perceval-opnfv"]
 	path = src/grimoirelab-perceval-opnfv
 	url = https://github.com/chaoss/grimoirelab-perceval-opnfv.git
-[submodule "src/grimoirelab-kingarthur"]
-	path = src/grimoirelab-kingarthur
-	url = https://github.com/chaoss/grimoirelab-kingarthur.git
-[submodule "src/grimoirelab-kidash"]
-	path = src/grimoirelab-kidash
-	url = https://github.com/chaoss/grimoirelab-kidash.git
 [submodule "src/grimoirelab-toolkit"]
 	path = src/grimoirelab-toolkit
 	url = https://github.com/chaoss/grimoirelab-toolkit.git
