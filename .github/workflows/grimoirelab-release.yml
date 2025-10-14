@@ -13,10 +13,14 @@ on:
         type: boolean
         default: false
       prerelease_label:
-        description: "Label for pre-release (only grimoirelab)"
+        description: "Label for pre-release"
         required: false
-        type: string
-        default: "rc"
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+        default: rc
       bump_major:
         description: "Create a major version release"
         required: true
@@ -59,10 +63,11 @@ jobs:
     with:
       git_email: ${{ needs.variables-job.outputs.git_email }}
       git_name: ${{ needs.variables-job.outputs.git_name }}
-      release_candidate: ${{ needs.variables-job.outputs.prerelease }}
+      prerelease: ${{ needs.variables-job.outputs.prerelease }}
+      prerelease_label: ${{ needs.variables-job.outputs.prerelease_label }}
       bump_major: ${{ needs.variables-job.outputs.bump_major }}
       module_name: 'grimoirelab-chronicler'
-      module_repository: 'grimoirelab/grimoirelab-chronicler'
+      module_repository: 'jjmerchante/grimoirelab-chronicler'
       module_directory: 'src/grimoirelab-chronicler'
       dependencies: ''
     secrets:
@@ -77,10 +82,11 @@ jobs:
     with:
       git_email: ${{ needs.variables-job.outputs.git_email }}
       git_name: ${{ needs.variables-job.outputs.git_name }}
-      release_candidate: ${{ needs.variables-job.outputs.prerelease }}
+      prerelease: ${{ needs.variables-job.outputs.prerelease }}
+      prerelease_label: ${{ needs.variables-job.outputs.prerelease_label }}
       bump_major: ${{ needs.variables-job.outputs.bump_major }}
       module_name: 'grimoirelab-core'
-      module_repository: 'grimoirelab/grimoirelab-core'
+      module_repository: 'jjmerchante/grimoirelab-core'
       module_directory: 'src/grimoirelab-core'
       dependencies: "${{ needs.grimoirelab-chronicler.outputs.package_version }}"
     secrets:
@@ -120,14 +126,49 @@ jobs:
       - id: check-dependencies
         name: Check if package dependencies exist
         run: |
-          sleep 180
+          sleep 1
 
       - id: semverup
         name: Update version number
         env:
           chronicler_version: "${{ needs.grimoirelab-chronicler.outputs.version}}"
           grimoirelab_core_version: "${{ needs.grimoirelab-core.outputs.version}}"
-        run: |          
+        run: |
+          BUMP_MAJOR=4
+          BUMP_MINOR=2
+          BUMP_PATCH=1
+          NO_BUMP=0
+          
+          function cmp_version () {
+            old=$1
+            old=${old%-*}
+            old=${old%rc*}
+            current=$2
+            current=${current%-*}
+            current=${current%rc*}
+            
+            currentArr=(${current//./ })
+            oldArr=(${old//./ })
+            
+            if [ ${currentArr[0]} -gt ${oldArr[0]} ]
+            then
+              echo $BUMP_MAJOR
+            elif [ ${currentArr[1]} -gt ${oldArr[1]} ]
+            then
+              echo $BUMP_MINOR
+            elif [ ${currentArr[2]} -gt ${oldArr[2]} ]
+            then
+              echo $BUMP_PATCH
+            else
+              echo $NO_BUMP
+            fi
+          }
+          
+          function old_pkg_version () {
+            pkg=$1
+            poetry show -l $pkg | grep version | head -1 | awk '{print $3}'
+          }
+          
           pkgs=("chronicler"
           "grimoirelab-core")
           
@@ -167,15 +208,15 @@ jobs:
           git add pyproject.toml grimoirelab/_version.py
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Update dependencies files
-        run: |
-          poetry add --lock --allow-prereleases \
-              "${{ needs.grimoirelab-chronicler.outputs.package_version }}" \
-              "${{ needs.grimoirelab-core.outputs.package_version }}"
-          poetry update --lock
-
-          git add pyproject.toml
-          git add poetry.lock
+#      - name: Update dependencies files
+#        run: |
+#          poetry add --lock --allow-prereleases \
+#              "${{ needs.grimoirelab-chronicler.outputs.package_version }}" \
+#              "${{ needs.grimoirelab-core.outputs.package_version }}"
+#          poetry update --lock
+#
+#          git add pyproject.toml
+#          git add poetry.lock
 
       - name: Use custom release notes if exists
         id: custom_notes
@@ -290,7 +331,7 @@ jobs:
           cat $news_file
 
       - name: Update Dockerfile version
-        if: inputs.prerelease == false
+        # if: inputs.prerelease == false
         run: |
           version=${{ steps.semverup.outputs.version }}
           dockerfile="docker/Dockerfile"
@@ -331,7 +372,7 @@ jobs:
         name: Wait for release to finish.
         if: steps.publish.outcome == 'success'
         run: |
-          url="https://api.github.com/repos/chaoss/grimoirelab/actions/workflows/release.yml/runs?created=>${{ steps.current_time.outputs.datetime }}"
+          url="https://api.github.com/repos/jjmerchante/grimoirelab/actions/workflows/release.yml/runs?created=>${{ steps.current_time.outputs.datetime }}"
           while true
           do
             workflows=$(curl -sS -H "Authorization: token ${{ secrets.GRIMOIRELAB_BUILD_TOKEN }}" $url)
