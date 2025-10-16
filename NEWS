@@ -1,5 +1,43 @@
 # Releases
 
+## GrimoireLab 2.0.0-alpha.1 - (2025-10-16)
+
+**New components:**
+
+* chronicler 1.0.0-alpha.5
+* grimoirelab-core 1.0.0-alpha.1
+
+The following list describes the changes by component:
+
+### chronicler
+
+No changes list available.
+
+### grimoirelab-core
+
+**New features:**
+
+ * SortingHat Integration\
+   Store and manage contributor identities in the SortingHat database,
+   accessible via API.
+ * Scalable Repository Collection\
+   Improved scalability for large-scale repository data collection.
+ * Bulk Repository Addition\
+   Add multiple repositories at once from a user or organization.
+ * Ecosystem and Project Organization\
+   Group repositories into ecosystems and projects for better structure
+   and analysis.
+ * Event Generation from Git Repositories\
+   Automatically generate events from commits, merge commits, file
+   changes, and contributor identities.
+ * OpenSearch Integration\
+   Store and query collected events in OpenSearch for scalable analytics.
+ * Repository Management UI\
+   Manage repositories directly from the user interface.
+ * SBOM Analysis\
+   Upload and analyze Software Bill of Materials (SBOM) files.
+
+
 ## GrimoireLab 1.9.2 - (2025-01-17)
 
 **New components:**
